@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 namespace topit {
     struct p_t {
@@ -15,16 +16,30 @@ namespace topit {
         virtual ~IDraw() = default;
     };
     struct Dot: IDraw {
+        explicit Dot(p_t dd); //explicit нужен для того, чтобы компилятор случайно не сделал Dot из p_t в другиих случаях.
         p_t begin() const override;
         p_t next(p_t prev) const override;
         p_t d;
+
     };
 }
 
 int main() {
     using namespace topit;
-    p_t a{1, 1}, b{0, 1};
-    std::cout << (a == b) << std::endl;
+    IDraw* shp[3] = {};
+    int err = 0;
+
+    try {
+        shp[0] = new Dot({0, 0});
+        shp[1] = new Dot({2, 3});
+    } catch (...) {
+        std::cerr << "Error!\n";
+        err = 1;
+    }
+
+    delete shp[0];
+    delete shp[1];
+    return err;
 }
 
 bool topit::operator==(p_t a, p_t b) {
@@ -33,6 +48,8 @@ bool topit::operator==(p_t a, p_t b) {
 bool topit::operator!=(p_t a, p_t b) {
     return !(a == b);
 }
+
+topit::Dot::Dot(p_t dd): IDraw(), d{dd} {};
 
 topit::p_t topit::Dot::begin() const {
     return d;
