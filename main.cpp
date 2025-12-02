@@ -8,6 +8,9 @@ namespace topit {
     struct f_t {
         p_t aa, bb;
     };
+    size_t rows(f_t fr);
+    size_t cols(f_t fr);
+
     bool operator==(p_t a, p_t b);
     bool operator!=(p_t a, p_t b);
     struct IDraw {
@@ -64,6 +67,13 @@ int main() {
     return err;
 }
 
+size_t topit::rows(f_t fr) {
+    return fr.bb.y - fr.aa.y + 1;
+}
+size_t topit::cols(f_t fr) {
+    return fr.bb.x - fr.aa.x + 1;
+}
+
 bool topit::operator==(p_t a, p_t b) {
         return a.x == b.x && a.y == b.y;
 }
@@ -96,4 +106,14 @@ topit::f_t topit::frame(const p_t* pts, size_t s) {
     p_t a{minx, miny};
     p_t b{maxx, maxy};
     return f_t{a, b};
+}
+
+char * topit::canvas(f_t fr, char fill) {
+    size_t size = rows(fr) * cols(fr);
+    char * c = new char[size];
+    
+    for (size_t i = 0; i < size; ++i) {
+        c[i] = fill;
+    }
+    return c;
 }
