@@ -9,6 +9,11 @@ namespace topit {
     };
     bool operator==(p_t a, p_t b);
     bool operator!=(p_t a, p_t b);
+    struct IDraw {
+        virtual p_t begin() const = 0;
+        virtual p_t next(p_t prev) const = 0;
+        virtual ~IDraw() = default;
+    };
 }
 
 int main() {
