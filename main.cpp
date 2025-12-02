@@ -118,6 +118,12 @@ char * topit::canvas(f_t fr, char fill) {
     return c;
 }
 
+void topit::paint(p_t p, char * cnv, f_t fr, char fill) {
+    size_t dx = p.x - fr.aa.x;
+    size_t dy = fr.bb.y - p.y;
+    cnv[dy * cols(fr) + dx] = fill;
+}
+
 void topit::flush(std::ostream& os, const char* cnv, f_t fr) {
     for (size_t i = 0; i < rows(fr); ++i) {
         for (size_t j = 0; j < cols(fr); ++j) {
