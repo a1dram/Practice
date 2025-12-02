@@ -2,7 +2,10 @@
 
 namespace topit {
     struct p_t {
-	int x, y; 
+        int x, y;
+    };
+    struct f_t {
+        p_t aa, bb;
     };
     bool operator==(p_t a, p_t b);
     bool operator!=(p_t a, p_t b);
