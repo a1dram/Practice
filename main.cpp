@@ -54,16 +54,19 @@ namespace topit {
 int main() {
     using namespace topit;
     int err=0;
-    IDraw* shp[3] = {};
+    size_t shp_size = 5;
+    IDraw* shp[shp_size] = {};
     p_t * pts = nullptr;
     size_t s = 0;
     
     try {
         shp[0] = new Dot({0, 0});
-        shp[1] = new Dot({5, 1});
-        shp[2] = new Dot({2, 5});
+        shp[1] = new VerticalLine({2, 0}, {2, 5});  // вертикальная линия
+        shp[2] = new VerticalLine({8, 2}, {8, 10});  // вертикальная линия 2
+        shp[3] = new Dot({5, 3});
+        shp[4] = new VerticalLine({14, 1}, {14, 4});  // вертикальная линия 3
         
-        for (size_t i = 0; i < 3; ++i){
+        for (size_t i = 0; i < shp_size; ++i){
             append (shp[i], &pts, s);
         }
         f_t fr = frame(pts, s);
@@ -78,9 +81,10 @@ int main() {
         std::cerr << e.what() << std::endl;
         err = 1;
     }
-    delete shp[0];
-    delete shp[1];
-    delete shp[2];
+
+    for (size_t i = 0; i < shp_size; ++i) {
+        delete shp[i];
+    }
     
     return err;
 }
@@ -160,6 +164,48 @@ topit::p_t topit::Dot::next(p_t prev) const {
         throw std::logic_error("bad prev");
     }
     return d;
+}
+
+topit::VerticalLine::VerticalLine(p_t start, p_t end) 
+    : start_(start), end_(end), is_valid_(start.x == end.x) {
+}
+
+topit::p_t topit::VerticalLine::begin() const {
+    if (!is_valid_) {
+        throw std::logic_error("Invalid vertical line: x coordinates differ");
+    }
+    
+    // Начало - точка с меньшей Y координатой
+    if (start_.y <= end_.y) {
+        return start_;
+    } else {
+        return end_;
+    }
+}
+
+topit::p_t topit::VerticalLine::next(p_t prev) const {
+    if (!is_valid_) {
+        throw std::logic_error("Invalid vertical line");
+    }
+    
+    // Находим начальную и конечную точки (с меньшей и большей Y)
+    p_t min_point = start_;
+    p_t max_point = end_;
+    if (start_.y > end_.y) {
+        min_point = end_;
+        max_point = start_;
+    }
+    
+    // Если достигли конечной точки - возвращаем начальную
+    if (prev == max_point) {
+        return min_point;
+    }
+    
+    // Переходим к следующей точке по вертикали
+    p_t next_point = prev;
+    next_point.y += 1;
+    
+    return next_point;
 }
 
 size_t topit::rows (f_t fr){
