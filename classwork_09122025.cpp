@@ -59,6 +59,14 @@ namespace topit {
         f_t rect;
     };
 
+    struct FilledRect: IDraw {
+        FilledRect(p_t pos, int w, int h);
+        FilledRect(p_t a, p_t b);
+        p_t begin() const override;
+        p_t next(p_t prev) const override;
+        f_t rect;
+    };
+
     p_t* extend(const p_t* pts, size_t s, p_t fill);
     void extend(p_t** pts, size_t& s, p_t fill);
     void append(const IDraw* sh, p_t** ppts, size_t& s);
@@ -71,14 +79,15 @@ namespace topit {
 int main() {
     using namespace topit;
     int err=0;
-    size_t shp_size = 2;
+    size_t shp_size = 3;
     IDraw* shp[shp_size] = {};
     p_t * pts = nullptr;
     size_t s = 0;
     
     try {
-        shp[0] = new Rect({10, 5}, {20, 10});
-        shp[1] = new Dot({2, 2});
+        shp[0] = new Rect({10, 5}, {25, 10});
+        shp[1] = new FilledRect({30, 5}, {45, 10});
+        shp[2] = new Dot({2, 2});
         
         for (size_t i = 0; i < shp_size; ++i){
             append(shp[i], &pts, s);
@@ -283,6 +292,30 @@ topit::p_t topit::Rect::next(p_t prev) const {
         return {prev.x - 1, prev.y};
     }
     throw std::logic_error("bad impl");
+}
+
+topit::FilledRect::FilledRect(p_t pos, int w, int h) :
+    rect{pos, {pos.x + w, pos.y + h}}
+{
+    if (!(w > 0 && h > 0)) {
+        throw std::logic_error("bad request");
+    }
+}
+
+topit::FilledRect::FilledRect(p_t a, p_t b): FilledRect(a, b.x - a.x, b.y - a.y) {}
+
+topit::p_t topit::FilledRect::begin() const {
+    return rect.aa;
+}
+
+topit::p_t topit::FilledRect::next(p_t prev) const {
+    if (prev.x < rect.bb.x) {
+        return {prev.x + 1, prev.y};
+    } else if (prev.x == rect.bb.x && prev.y < rect.bb.y) {
+        return {rect.aa.x, prev.y + 1};
+    } else if (prev == rect.bb) {
+        return rect.aa;
+    }
 }
 
 
