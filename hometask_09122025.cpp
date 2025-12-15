@@ -205,6 +205,18 @@ topit::Layers& topit::Layers::operator=(const Layers& other) {
     return *this;
 }
 
+topit::Layers::Layers(Layers&& other) noexcept 
+    : points_(other.points_)
+    , pts_(other.pts_)
+    , layers_(other.layers_)
+    , sizes_(other.sizes_)
+{
+    other.points_ = 0;
+    other.pts_ = nullptr;
+    other.layers_ = 0;
+    other.sizes_ = nullptr;
+}
+
 topit::p_t* topit::extend(const p_t* pts, size_t s, p_t fill) {
   p_t* r = new p_t[s + 1];
   for (size_t i = 0; i < s; ++i) {
