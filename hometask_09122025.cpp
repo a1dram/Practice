@@ -150,6 +150,29 @@ topit::Layers::~Layers() {
   delete[] sizes_;
 }
 
+topit::Layers::Layers(const Layers& other) 
+    : points_(other.points_)
+    , layers_(other.layers_)
+{
+    if (points_ > 0) {
+        pts_ = new p_t[points_];
+        for (size_t i = 0; i < points_; ++i) {
+            pts_[i] = other.pts_[i];
+        }
+    } else {
+        pts_ = nullptr;
+    }
+    
+    if (layers_ > 0) {
+        sizes_ = new size_t[layers_];
+        for (size_t i = 0; i < layers_; ++i) {
+            sizes_[i] = other.sizes_[i];
+        }
+    } else {
+        sizes_ = nullptr;
+    }
+}
+
 topit::p_t* topit::extend(const p_t* pts, size_t s, p_t fill) {
   p_t* r = new p_t[s + 1];
   for (size_t i = 0; i < s; ++i) {
@@ -302,4 +325,3 @@ bool topit::operator==(p_t a, p_t b) {
 bool topit::operator!=(p_t a, p_t b) {
   return !(a == b);
 }
-
