@@ -63,6 +63,7 @@ namespace topit {
     f_t frame() const {
       return topit::frame(pts_, points_);
     }
+    
     size_t points() const {
       return points_;
     }
@@ -99,6 +100,7 @@ int main() {
     for (size_t i = 0; i < 3; ++i) {
       layers.append(*(shp[i]));
     }
+    
     f_t fr = layers.frame();
     char* cnv = canvas(fr, '.');
     const char* brush = "#*%";
